@@ -11,99 +11,126 @@ def table():
     conn = sqlite3.connect("Database.db")
     cur = conn.cursor()
     cur.execute('SELECT ROUND(TOTALE_COSTI_A_BUDGET,2) FROM totalecostiBudget ')
-    risultati1 = cur.fetchall()
+    risultat1 = cur.fetchall()
+    risultati1 = list(map(float, [x[0] for x in risultat1]))
         # Query 2
     cur.execute('SELECT ROUND(TOTALE_COSTI_A_CONSUNTIVO,2) FROM totalecostiConsuntivo')
-    risultati2 = cur.fetchall()
+    risultat2 = cur.fetchall()
+    risultati2 = list(map(float, [x[0] for x in risultat2]))
     #RICAVI
         # Query 3
     cur.execute('SELECT ROUND(TotaleVenditeBudget,2) FROM totalevenditebudget')
-    risultati3 = cur.fetchall()
+    risultat3 = cur.fetchall()
+    risultati3 = list(map(float, [x[0] for x in risultat3]))
         # Query 4
     cur.execute('SELECT ROUND(TotaleVenditeConsuntivo,2) FROM totalevenditeconsuntivo')
-    risultati4 = cur.fetchall()
+    risultat4 = cur.fetchall()
+    risultati4 = list(map(float, [x[0] for x in risultat4]))
     #MIX STANDARD
     # Query 5
     cur.execute('SELECT ROUND(sum(venditemix),2) from  mixstandardvendite')
-    risultati5 = cur.fetchall()
+    risultat5 = cur.fetchall()
+    risultati5 = list(map(float, [x[0] for x in risultat5]))
     # Query 6
     cur.execute('SELECT ROUND(sum(costitotalimixstandard),2) from  costitotalimixstandard')
-    risultati6 = cur.fetchall()
+    risultat6 = cur.fetchall()
+    risultati6 = list(map(float, [x[0] for x in risultat6]))
     # Query 7
     cur.execute('SELECT ROUND(sum(MOL_mix_standard),2) from  molmixstandard')
-    risultati7 = cur.fetchall()
+    risultat7 = cur.fetchall()
+    risultati7 = list(map(float, [x[0] for x in risultat7]))
     #MIX EFFETTIVO
     # Query 8
     cur.execute('SELECT ROUND(sum(venditemix),2) from  mixeffettivovendite')
-    risultati8 = cur.fetchall()
+    risultat8 = cur.fetchall()
+    risultati8 = list(map(float, [x[0] for x in risultat8]))
     # Query 9
     cur.execute('SELECT ROUND(sum(costitotalimixeffettivo),2) from  costitotalimixeffettivo')
-    risultati9 = cur.fetchall()
+    risultat9 = cur.fetchall()
+    risultati9 = list(map(float, [x[0] for x in risultat9]))
     # Query 10
     cur.execute('SELECT ROUND(sum(MOL_mix_effettivo),2) from  molmixeffettivo')
-    risultati10 = cur.fetchall()
+    risultat10 = cur.fetchall()
+    risultati10 = list(map(float, [x[0] for x in risultat10]))
     #MOL
     #Query 11
     cur.execute("SELECT ROUND(sum(MOL_BUDGET),2) from molbudget")
-    risultati11=cur.fetchall()
+    risultat11 = cur.fetchall()
+    risultati11 = list(map(float, [x[0] for x in risultat11]))
     #Query 12
     cur.execute("SELECT ROUND(sum(MOL_Consuntivo),2) from molconsuntivo")
-    risultati12=cur.fetchall()
+    risultat12 = cur.fetchall()
+    risultati12 = list(map(float, [x[0] for x in risultat12]))
     #Quantitá
     #Query 13
     cur.execute("SELECT ROUND(sum(Qta),0) FROM VolumiArticoliBudget ")
-    risultati13=cur.fetchall()
+    risultat13 = cur.fetchall()
+    risultati13 = list(map(int, [x[0] for x in risultat13]))
     #Query 14
     cur.execute("SELECT ROUND(sum(Qta),0) FROM VolumiArticoliConsuntivo ")
-    risultati14=cur.fetchall()
+    risultat14 = cur.fetchall()
+    risultati14 = list(map(int, [x[0] for x in risultat14]))
     #Query 15
     cur.execute("SELECT ROUND(sum(qta),0) FROM volTotaleMixStandard ")
-    risultati15=cur.fetchall()
+    risultat15 = cur.fetchall()
+    risultati15 = list(map(int, [x[0] for x in risultat15]))
     #Query 16
     cur.execute("SELECT ROUND(sum(qta),0) FROM volTotaleMixconsuntivo ")
-    risultati16=cur.fetchall()
+    risultat16 = cur.fetchall()
+    risultati16 = list(map(int, [x[0] for x in risultat16]))
     #DELTA
     #Delta1
     cur.execute("SELECT ROUND(sum(venditemix),2)-(SELECT ROUND(TotaleVenditeBudget,2) FROM totalevenditebudget) from  mixstandardvendite ")
-    Delta1=cur.fetchall()
+    Delt1=cur.fetchall()
+    Delta1 = [round(x[0], 2) for x in Delt1]
     #Delta2
     cur.execute("SELECT ROUND(sum(venditemix),2)-(SELECT ROUND(sum(venditemix),2) from  mixstandardvendite) from  mixeffettivovendite")
-    Delta2=cur.fetchall()
+    Delt2=cur.fetchall()
+    Delta2 = [round(x[0], 2) for x in Delt2]
     #Delta3
     cur.execute("SELECT ROUND(TotaleVenditeConsuntivo,2)-(SELECT ROUND(sum(venditemix),2) from  mixeffettivovendite) FROM totalevenditeconsuntivo")
-    Delta3=cur.fetchall()
+    Delt3=cur.fetchall()
+    Delta3 = [round(x[0], 2) for x in Delt3]
     #Delta4
     cur.execute(" SELECT ROUND(sum(costitotalimixstandard),2) -(SELECT ROUND(TOTALE_COSTI_A_BUDGET,2) FROM totalecostiBudget ) from  costitotalimixstandard")
-    Delta4=cur.fetchall()  
+    Delt4=cur.fetchall()
+    Delta4 = [round(x[0], 2) for x in Delt4]
     #Delta5
     cur.execute("SELECT ROUND(sum(costitotalimixeffettivo),2)-(SELECT ROUND(sum(costitotalimixstandard),2) from  costitotalimixstandard) from  costitotalimixeffettivo")
-    Delta5=cur.fetchall()
+    Delt5=cur.fetchall()
+    Delta5 = [round(x[0], 2) for x in Delt5]
     #Delta6
     cur.execute("SELECT ROUND(TOTALE_COSTI_A_CONSUNTIVO,2) -(SELECT ROUND(sum(costitotalimixeffettivo),2) from  costitotalimixeffettivo)FROM totalecostiConsuntivo")
-    Delta6=cur.fetchall()
+    Delt6=cur.fetchall()
+    Delta6 = [round(x[0], 2) for x in Delt6]
     #Delta7
     cur.execute("SELECT ROUND(sum(MOL_mix_standard),2) -(SELECT ROUND(sum(MOL_BUDGET),2) from molbudget)from  molmixstandard")
-    Delta7=cur.fetchall()
+    Delt7=cur.fetchall()
+    Delta7 = [round(x[0], 2) for x in Delt7]
     #Delta8
     cur.execute("SELECT ROUND(sum(MOL_mix_effettivo),2)-(SELECT ROUND(sum(MOL_mix_standard),2) from  molmixstandard) from  molmixeffettivo")
-    Delta8=cur.fetchall()
+    Delt8=cur.fetchall()
+    Delta8 = [round(x[0], 2) for x in Delt8]
     #Delta9
     cur.execute("SELECT ROUND(sum(MOL_Consuntivo),2) -(SELECT ROUND(sum(MOL_mix_effettivo),2) from  molmixeffettivo)from molconsuntivo")
-    Delta9=cur.fetchall()
+    Delt9=cur.fetchall()
+    Delta9 = [round(x[0], 2) for x in Delt9]
     #Delta10
     cur.execute("SELECT ROUND(sum(qta),0)-(SELECT ROUND(sum(Qta),0) FROM VolumiArticoliBudget) FROM volTotaleMixStandard")
-    Delta10=cur.fetchall()
+    Delt10=cur.fetchall()
+    Delta10 = [int(x[0]) for x in Delt10]
     #Delta11
     cur.execute("SELECT ROUND(sum(qta),0)-(SELECT ROUND(sum(qta),0) FROM volTotaleMixStandard) FROM volTotaleMixconsuntivo ")
-    Delta11=cur.fetchall()
+    Delt11=cur.fetchall()
+    Delta11 = [int(x[0]) for x in Delt11]
     #Delta12
     cur.execute("SELECT ROUND(sum(Qta),0) -(SELECT ROUND(sum(qta),0) FROM volTotaleMixconsuntivo )FROM VolumiArticoliConsuntivo")
-    Delta12=cur.fetchall()
-    
+    Delt12=cur.fetchall()
+    Delta12 = [int(x[0]) for x in Delt12]
     # chiusura della connessione
     conn.close()
 
-    return render_template('home.html', risultati1=risultati1, risultati2=risultati2 ,risultati3=risultati3, risultati4=risultati4, risultati5=risultati5, risultati6=risultati6 , risultati7=risultati7 , risultati8=risultati8 , risultati9=risultati9, risultati10=risultati10 , risultati11=risultati11 , risultati12=risultati12 , risultati13=risultati13 , risultati14=risultati14 , risultati15=risultati15 , risultati16=risultati16 , Delta1=Delta1, Delta2=Delta2, Delta3=Delta3 , Delta4=Delta4, Delta5=Delta5 , Delta6=Delta6 , Delta7=Delta7 , Delta8=Delta8 , Delta9=Delta9, Delta10=Delta10, Delta11=Delta11 , Delta12=Delta12 )
+    return render_template('home.html', risultati1=risultati1, risultati2=risultati2 ,risultati3=risultati3, risultati4=risultati4, risultati5=risultati5, risultati6=risultati6 , risultati7=risultati7 , risultati8=risultati8 , risultati9=risultati9, risultati10=risultati10 , risultati11=risultati11 , risultati12=risultati12 , risultati13=risultati13 , risultati14=risultati14 , risultati15=risultati15 , risultati16=risultati16 , Delta1=Delta1, Delta2=Delta2, Delta3=Delta3 , Delta4=Delta4, Delta5=Delta5 , Delta6=Delta6 , Delta7=Delta7 , Delta8=Delta8 , Delta9=Delta9, Delta10=Delta10, Delta11=Delta11 , Delta12=Delta12)
     
 if __name__ == '__main__':
     app.run(debug=True)
