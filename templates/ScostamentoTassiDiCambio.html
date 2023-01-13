@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <table id="tabella" class="display">
+        <thead>
+            <tr>
+                <th>Tasso Budget  </th>
+                <th> Scostamento </th>
+                <th> Tasso Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valore in rs1 %}
+            <tr>
+                <td>{{ valore[0]|round(3) }}</td>
+                <td>{{ valore[1]|round(3) }}</td>
+                <td>{{ valore[2]|round(3) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+{% endblock %}

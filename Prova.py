@@ -94,6 +94,17 @@ def CreaViste():
     cursor.execute('DROP VIEW IF EXISTS molconsuntivo;')
     cursor.execute('DROP VIEW IF EXISTS molmixstandard;')
     cursor.execute('DROP VIEW IF EXISTS molmixeffettivo;')
+
+    cursor.execute('DROP VIEW IF EXISTS venditeBudgetinVALUTALOCALECONSUNTIVO;')
+    cursor.execute('DROP VIEW IF EXISTS ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO;')
+
+    cursor.execute('DROP VIEW IF EXISTS TotaleVenditeBudgetVALUTACONSUNTIVO;')
+
+    cursor.execute('DROP VIEW IF EXISTS TassiBudget;')
+    cursor.execute('DROP VIEW IF EXISTS TassiConsuntivo;')
+
+    cursor.execute('DROP VIEW IF EXISTS ScostamentoTassiDiCambio ;')
+
     cursor.execute("CREATE VIEW venditeBudget as select * from vendita where Tipologia='BUDGET' or Tipologia='Budget' and ImportV>0;")
     cursor.execute("CREATE VIEW venditeBudgetinVALUTALOCALE as select vb.NrMov,vb.Tipologia,vb.NrArtV,vb.NrOrig,vb.Qta,vb.ImportV/v.Tasso as RealImportV,v.CodVal from venditebudget vb join cliente c on vb.NrOrig=c.CodCLi join valuta v on c.Valuta=v.CodVal where v.Tipo='Budget' or v.Tipo='BUDGET';" )
     cursor.execute("Create view ImportiVenditePerArticoloBudget AS select vbvl.NrArtV,sum(RealImportV) as ImportoTotArticolo,sum(vbvl.Qta) as Qta from venditebudgetinvalutalocale vbvl group by vbvl.NrArtV; ")
@@ -131,7 +142,7 @@ def CreaViste():
     cursor.execute("create view costounitarioBudget as select `TOTALE_COSTI_A_BUDGET`/quantitàOutputBudget as costoUnitario from quantitàOutputBudget,totalecostibudget;")
     cursor.execute("create view costoPerArticoloBudget as select NrArt,costoUnitario*quantitàOutput as costoPerArticolo from costoUnitarioBudget,costivariabilieqtabudget;")
     cursor.execute("create view quantitàOutputConsuntivo as select sum(quantitàOutput) as quantitàOutputConsuntivo from costivariabilieqtaConsuntivo;")
-    cursor.execute("create view costounitarioConsuntivo as select `TOTALE COSTI A CONSUNTIVO`/quantitàOutputConsuntivo as costoUnitario from quantitàOutputConsuntivo,totalecosticonsuntivo;")
+    cursor.execute("create view costounitarioConsuntivo as select `TOTALE_COSTI_A_CONSUNTIVO`/quantitàOutputConsuntivo as costoUnitario from quantitàOutputConsuntivo,totalecosticonsuntivo;")
     cursor.execute("create view costoPerArticoloConsuntivo as select NrArt,costoUnitario*quantitàOutput as costoPerArticolo from costounitarioConsuntivo,costivariabilieqtaConsuntivo;")
     cursor.execute("create view semilavorati as select NrArt,sum(quantitàOutput) from costivariabilieqtabudget v join consumo c on v.NrArt=c.CodiceMP where c.Tipol='Budget' or c.Tipol='BUDGET' group by NrArt;")
     cursor.execute("create view mixstandardVendite as select m.NrArtV,(p.prezzomedio*m.qta) as venditemix from mixstandard m join prezzomedioperarticolobudget p on m.NrArtV=p.NrArtV;")
@@ -146,8 +157,20 @@ def CreaViste():
     cursor.execute("create view molconsuntivo AS SELECT (v.TotaleVenditeConsuntivo - c.`TOTALE_COSTI_A_CONSUNTIVO`) AS `MOL_CONSUNTIVO` FROM (totalecosticonsuntivo c JOIN totalevenditeconsuntivo v)    ; ")
     cursor.execute("create view molmixstandard as select Ricavo-costitotalimixstandard as `MOL_mix_standard` from ricavimixstandard,costitotalimixstandard;")
     cursor.execute("create view molmixeffettivo as select Ricavo-costitotalimixeffettivo as `MOL_mix_effettivo` from ricavimixeffettivo,costitotalimixeffettivo;")
+
+    cursor.execute("CREATE VIEW venditeBudgetinVALUTALOCALECONSUNTIVO as select vb.NrMov,vb.Tipologia,vb.NrArtV,vb.NrOrig,vb.Qta,vb.ImportV/v.Tasso as RealImportV,v.CodVal from venditebudget vb join cliente c on vb.NrOrig=c.CodCLi join valuta v on c.Valuta=v.CodVal where v.Tipo = 'consuntivo' OR v.Tipo = 'CONSUNTIVO';")
+    cursor.execute("Create view ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO AS select vbvl.NrArtV,sum(RealImportV) as ImportoTotArticolo,sum(vbvl.Qta) as Qta from venditeBudgetinVALUTALOCALECONSUNTIVO vbvl group by vbvl.NrArtV;")
+
+    cursor.execute("Create view TotaleVenditeBudgetVALUTACONSUNTIVO as select sum(ImportoTotArticolo) as TotaleVenditeBudgetValutaConsuntivo from ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO;")
+
+    cursor.execute('create view TassiBudget as select CodVal,Tasso from valuta where Tipo="Budget" or Tipo="BUDGET";')
+    cursor.execute('create view TassiConsuntivo as select CodVal,Tasso from valuta where Tipo="Consuntivo" or Tipo="CONSUNTIVO";')
+
+    cursor.execute('create view ScostamentoTassiDiCambio as select b.Tasso as "TassoBudget", c.Tasso-b.Tasso as "Scostamento",c.Tasso as "TassoConsuntivo" from TassiBudget b,TassiConsuntivo c where b.CodVal=c.CodVal;')
+   
     print("View created!")
     conn.close()
+    
  
 
 def Risultati():

@@ -131,7 +131,23 @@ def table():
     conn.close()
 
     return render_template('home.html', risultati1=risultati1, risultati2=risultati2 ,risultati3=risultati3, risultati4=risultati4, risultati5=risultati5, risultati6=risultati6 , risultati7=risultati7 , risultati8=risultati8 , risultati9=risultati9, risultati10=risultati10 , risultati11=risultati11 , risultati12=risultati12 , risultati13=risultati13 , risultati14=risultati14 , risultati15=risultati15 , risultati16=risultati16 , Delta1=Delta1, Delta2=Delta2, Delta3=Delta3 , Delta4=Delta4, Delta5=Delta5 , Delta6=Delta6 , Delta7=Delta7 , Delta8=Delta8 , Delta9=Delta9, Delta10=Delta10, Delta11=Delta11 , Delta12=Delta12)
-    
+
+@app.route('/TotaleVenditeBudget')
+def VALUTACONSUNTIVO():
+    conn = sqlite3.connect("Database.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM TotaleVenditeBudgetVALUTACONSUNTIVO ')
+    rs = cur.fetchall()
+    return render_template('TotaleVenditeBudget.html', rs=rs)
+
+@app.route('/ScostamentoTassiDiCambio')
+def ScostamentoTassiDiCambio():
+    conn = sqlite3.connect("Database.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM ScostamentoTassiDiCambio ')
+    rs1 = cur.fetchall()
+    return render_template('ScostamentoTassiDiCambio.html', rs1=rs1)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
