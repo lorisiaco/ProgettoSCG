@@ -46,17 +46,8 @@ where b.CodVal=c.CodVal
 -- PER pagina scostamenti costi per AREAPRODUZIONE--
 
 
- create view CostiPerAreaProdBudget as
-select i.NrArea,i.RisorsaC,r.CostoBugetR,sum(i.Tempo*r.CostoBugetR)as CostiImpiego
-from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR )
-where (i.Tipologia = 'budget' or i.Tipologia='BUDGET') and i.Quantitá>=0
-group by i.NrArea,i.RisorsaC
-ORDER BY sum(i.Tempo) DESC;
+create view ScostamentoCostoOrarioAreaProd as
+select AreaProdR,RisorsaR,CostoBugetR,(CostoConsR-CostoBugetR) as Scostamento,CostoConsR
+from risorsa
 
- create view CostiPerAreaProdConsuntivo as
-select i.NrArea,i.RisorsaC,r.CostoConsR,sum(i.Tempo*r.CostoConsR)as CostiImpiego
-from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR )
-where (i.Tipologia = 'consuntivo' or i.Tipologia='CONSUNTIVO') and i.Quantitá>=0
-group by i.NrArea,i.RisorsaC
-ORDER BY sum(i.Tempo) DESC
 
