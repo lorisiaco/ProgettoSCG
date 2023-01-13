@@ -17,8 +17,8 @@ group by vbvl.NrArtV;
 --questa è quella da stampare:--
 
 Create view TotaleVenditeBudgetVALUTACONSUNTIVO as
-select sum(ImportoTotArticolo) as TotaleVenditeBudget
-from ImportiVenditePerArticoloBudget;
+select sum(ImportoTotArticolo) as TotaleVenditeBudgetValutaConsuntivo
+from ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO;
 
 
 
