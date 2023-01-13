@@ -148,6 +148,15 @@ def ScostamentoTassiDiCambio():
     rs1 = cur.fetchall()
     return render_template('ScostamentoTassiDiCambio.html', rs1=rs1)
 
+@app.route('/ScostamentoCostoOrarioAreaProduzione')
+def ScostamentoCostoOrarioAreaProduzione():
+    conn = sqlite3.connect("Database.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM ScostamentoCostoOrarioAreaProd  ')
+    rs2 = cur.fetchall()
+    return render_template('ScostamentoCostoOrarioAreaProduzione.html', rs2=rs2)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

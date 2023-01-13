@@ -105,6 +105,8 @@ def CreaViste():
 
     cursor.execute('DROP VIEW IF EXISTS ScostamentoTassiDiCambio ;')
 
+    cursor.execute('DROP VIEW IF EXISTS ScostamentoCostoOrarioAreaProd ;')
+
     cursor.execute("CREATE VIEW venditeBudget as select * from vendita where Tipologia='BUDGET' or Tipologia='Budget' and ImportV>0;")
     cursor.execute("CREATE VIEW venditeBudgetinVALUTALOCALE as select vb.NrMov,vb.Tipologia,vb.NrArtV,vb.NrOrig,vb.Qta,vb.ImportV/v.Tasso as RealImportV,v.CodVal from venditebudget vb join cliente c on vb.NrOrig=c.CodCLi join valuta v on c.Valuta=v.CodVal where v.Tipo='Budget' or v.Tipo='BUDGET';" )
     cursor.execute("Create view ImportiVenditePerArticoloBudget AS select vbvl.NrArtV,sum(RealImportV) as ImportoTotArticolo,sum(vbvl.Qta) as Qta from venditebudgetinvalutalocale vbvl group by vbvl.NrArtV; ")
@@ -167,6 +169,8 @@ def CreaViste():
     cursor.execute('create view TassiConsuntivo as select CodVal,Tasso from valuta where Tipo="Consuntivo" or Tipo="CONSUNTIVO";')
 
     cursor.execute('create view ScostamentoTassiDiCambio as select b.Tasso as "TassoBudget", c.Tasso-b.Tasso as "Scostamento",c.Tasso as "TassoConsuntivo" from TassiBudget b,TassiConsuntivo c where b.CodVal=c.CodVal;')
+
+    cursor.execute('create view ScostamentoCostoOrarioAreaProd as select AreaProdR,RisorsaR,CostoBudgetR,(CostoConsR-CostoBudgetR) as Scostamento,CostoConsR from risorsa')
    
     print("View created!")
     conn.close()

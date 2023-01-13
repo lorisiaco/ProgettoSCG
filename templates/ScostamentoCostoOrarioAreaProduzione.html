@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+    $(document).ready(function() {
+        $('#tabella').DataTable( {
+            "paging":   true,
+            "ordering": true,
+            "info":     true
+        } );
+    } );
+</script>
+<body>  
+    <table id="tabella" class="display">
+        <thead>
+            <tr>
+                <th>Area Produzione  </th>
+                <th> Risorsa</th>
+                <th> Costo a Budget</th>
+                <th>Scostamento  </th>
+                <th> Costo a Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valore in rs2 %}
+            <tr>
+                <td>{{ valore[0] }}</td>
+                <td>{{ valore[1] }}</td>
+                <td>{{ valore[2] }}</td>
+                <td>{{ valore[3] }}</td>
+                <td>{{ valore[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+{% endblock %}
