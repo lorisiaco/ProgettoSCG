@@ -76,7 +76,6 @@ def CreaViste():
     cursor.execute('DROP VIEW IF EXISTS quantitàOutputConsuntivo;')
     cursor.execute('DROP VIEW IF EXISTS costounitarioConsuntivo;')
     cursor.execute('DROP VIEW IF EXISTS costoPerArticoloConsuntivo;')
-    cursor.execute('DROP VIEW IF EXISTS semilavorati;')
     cursor.execute('DROP VIEW IF EXISTS mixstandardVendite;')
     cursor.execute('DROP VIEW IF EXISTS mixeffettivovendite;')
     cursor.execute('DROP VIEW IF EXISTS ricavimixstandard;')
@@ -165,7 +164,6 @@ def CreaViste():
     cursor.execute("create view quantitàOutputConsuntivo as select sum(quantitàOutput) as quantitàOutputConsuntivo from costivariabilieqtaConsuntivo;")
     cursor.execute("create view costounitarioConsuntivo as select `TOTALE_COSTI_A_CONSUNTIVO`/quantitàOutputConsuntivo as costoUnitario from quantitàOutputConsuntivo,totalecosticonsuntivo;")
     cursor.execute("create view costoPerArticoloConsuntivo as select NrArt,costoUnitario*quantitàOutput as costoPerArticolo from costounitarioConsuntivo,costivariabilieqtaConsuntivo;")
-    cursor.execute("create view semilavorati as select NrArt,sum(quantitàOutput) from costivariabilieqtabudget v join consumo c on v.NrArt=c.CodiceMP where c.Tipol='Budget' or c.Tipol='BUDGET' group by NrArt;")
     cursor.execute("create view mixstandardVendite as select m.NrArtV,(p.prezzomedio*m.qta) as venditemix from mixstandard m join prezzomedioperarticolobudget p on m.NrArtV=p.NrArtV;")
     cursor.execute("create view mixeffettivovendite as select m.NrArtV,(p.prezzomedio*m.qta) as venditemix from mixeffettivo m join prezzomedioperarticoloconsuntivo p on m.NrArtV=p.NrArtV;")
     cursor.execute("create view ricavimixstandard as select sum(venditemix) as 'Ricavo' from mixstandardvendite;")
@@ -174,10 +172,7 @@ def CreaViste():
     cursor.execute("create view costitotalimixstandard as select sum(costimixstandard) as costitotalimixstandard from costimixstandardperarticolo;")
     cursor.execute("create view costimixeffettivoperarticolo as select c.NrArt,sum((c.costoPerArticolo*m.mix)) as costimixeffettivo from costoperarticolobudget c join mixvolumiconsuntivo m on c.NrArt=m.NrArtV group by c.NrArt;")
     cursor.execute("create view costitotalimixeffettivo as select sum(costimixeffettivo) as costitotalimixeffettivo from costimixeffettivoperarticolo;")
-    cursor.execute("create VIEW molbudget AS SELECT v.TotaleVenditeBudget - c.`TOTALE_COSTI_A_BUDGET` AS `MOL_BUDGET` FROM (totalecostibudget c JOIN totalevenditebudget v);")
-    cursor.execute("create view molconsuntivo AS SELECT (v.TotaleVenditeConsuntivo - c.`TOTALE_COSTI_A_CONSUNTIVO`) AS `MOL_CONSUNTIVO` FROM (totalecosticonsuntivo c JOIN totalevenditeconsuntivo v)    ; ")
-    cursor.execute("create view molmixstandard as select Ricavo-costitotalimixstandard as `MOL_mix_standard` from ricavimixstandard,costitotalimixstandard;")
-    cursor.execute("create view molmixeffettivo as select Ricavo-costitotalimixeffettivo as `MOL_mix_effettivo` from ricavimixeffettivo,costitotalimixeffettivo;")
+
     #PARTE NUOVA/QUERY NUOVE PER MODIFICA
     #NUOVI COSTI
     #--BUDGET--
@@ -187,7 +182,7 @@ def CreaViste():
     cursor.execute("create view CostiTotaliBudget as select cp.NrArtC,CostoTotaleProduzione/vb.Qta as CostoTotaleUnitario from CostiProdBudget cp join volumiarticolibudget vb on (cp.NrArtC=vb.NrArtV);")
     cursor.execute("create view CostiTotaliperArticoloBudget as select cp.NrArtC,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta from CostiTotaliBudget cp join volumiarticolibudget vb on (cp.NrArtC=vb.NrArtV);")
     #--CONSUNTIVO--
-    cursor.execute("Create view CostoImpiegoRisorseConsuntivo as select i.NrArt,sum(i.Tempo*r.CostoBudgetR)as CostiImpiego from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR ) where i.Tipologia like 'Consuntivo' group by i.NrArt;")
+    cursor.execute("Create view CostoImpiegoRisorseConsuntivo as select i.NrArt,sum(i.Tempo*r.CostoConsR)as CostiImpiego from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR ) where i.Tipologia like 'Consuntivo' group by i.NrArt;")
     cursor.execute("create view CostiConsumiConsuntivo as select NrArtC,sum(ImportoTot) as CostoConsumo from consumo where Tipol='Consuntivo' or Tipol='CONSUNTIVO' group by NrArtC;")
     cursor.execute("create view CostiProdConsuntivo as select c.NrArtC,CostoConsumo+i.CostiImpiego as CostoTotaleProduzione from CostiConsumiConsuntivo c join CostoImpiegoRisorseConsuntivo i  on(c.NrArtC=i.NrArt) group by c.NrArtC;")
     cursor.execute("create view CostiTotaliConsuntivo as select cp.NrArtC,CostoTotaleProduzione/vb.Qta as CostoTotaleUnitario from CostiProdConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.NrArtV);")
@@ -216,6 +211,12 @@ def CreaViste():
    
     cursor.execute('create view TotaleCostiBudgetDEFINITIVO as select sum(CostoTotalePerArticolo) as TotaleCostiBudget from CostiTotaliperArticoloBudget;')
     cursor.execute('create view TotaleCostiConsuntivoDEFINITIVO as select sum(CostoTotalePerArticolo) as TotaleCostiConsuntivo from CostiTotaliperArticoloConsuntivo;')
+
+    #--MOL--
+    cursor.execute("create VIEW molbudget AS SELECT v.TotaleVenditeBudget - c.TotaleCostiBudget AS `MOL_BUDGET` FROM (TotaleCostiBudgetDEFINITIVO c JOIN totalevenditebudget v);")
+    cursor.execute("create view molconsuntivo AS SELECT (v.TotaleVenditeConsuntivo - c.TotaleCostiConsuntivo) AS `MOL_CONSUNTIVO` FROM (TotaleCostiConsuntivoDEFINITIVO c JOIN totalevenditeconsuntivo v)    ; ")
+    cursor.execute("create view molmixstandard as select Ricavo-TotaleCostiMixStandard as `MOL_mix_standard` from ricavimixstandard,TotaleCostiMixStandard;")
+    cursor.execute("create view molmixeffettivo as select Ricavo-TotaleCostiMixEffettivo as `MOL_mix_effettivo` from ricavimixeffettivo,TotaleCostiMixEffettivo;")
 
     print("View created!")
     conn.close()

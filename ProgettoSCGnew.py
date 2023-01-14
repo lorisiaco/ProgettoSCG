@@ -95,15 +95,15 @@ def table():
     Delt3=cur.fetchall()
     Delta3 = [round(x[0], 2) for x in Delt3]
     #Delta4
-    cur.execute(" SELECT ROUND(sum(costitotalimixstandard),2) -(SELECT ROUND(TOTALE_COSTI_A_BUDGET,2) FROM totalecostiBudget ) from  costitotalimixstandard")
+    cur.execute(" SELECT ROUND(sum(TotaleCostiMixStandard),2) -(SELECT ROUND(TotaleCostiBudget,2) FROM TotaleCostiBudgetDEFINITIVO ) from  TotaleCostiMixStandard")
     Delt4=cur.fetchall()
     Delta4 = [round(x[0], 2) for x in Delt4]
     #Delta5
-    cur.execute("SELECT ROUND(sum(costitotalimixeffettivo),2)-(SELECT ROUND(sum(costitotalimixstandard),2) from  costitotalimixstandard) from  costitotalimixeffettivo")
+    cur.execute("SELECT ROUND(sum(TotaleCostiMixEffettivo),2)-(SELECT ROUND(sum(TotaleCostiMixStandard),2) from  TotaleCostiMixStandard) from  TotaleCostiMixEffettivo")
     Delt5=cur.fetchall()
     Delta5 = [round(x[0], 2) for x in Delt5]
     #Delta6
-    cur.execute("SELECT ROUND(TOTALE_COSTI_A_CONSUNTIVO,2) -(SELECT ROUND(sum(costitotalimixeffettivo),2) from  costitotalimixeffettivo)FROM totalecostiConsuntivo")
+    cur.execute("SELECT ROUND(TotaleCostiConsuntivo,2) -(SELECT ROUND(sum(TotaleCostiMixEffettivo),2) from  TotaleCostiMixEffettivo)FROM TotaleCostiConsuntivoDEFINITIVO")
     Delt6=cur.fetchall()
     Delta6 = [round(x[0], 2) for x in Delt6]
     #Delta7
