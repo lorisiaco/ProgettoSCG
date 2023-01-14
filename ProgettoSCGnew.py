@@ -1,8 +1,11 @@
 from flask import Flask, render_template
 import sqlite3
 import Prova
+import webbrowser
+
 
 app = Flask(__name__)
+webbrowser.open("http://127.0.0.1:5000")
 
 @app.route('/')
 def table():
@@ -10,11 +13,11 @@ def table():
     Prova.CreaViste()
     conn = sqlite3.connect("Database.db")
     cur = conn.cursor()
-    cur.execute('SELECT ROUND(TOTALE_COSTI_A_BUDGET,2) FROM totalecostiBudget ')
+    cur.execute('SELECT ROUND(sum(TotaleCostiBudget),2) FROM TotaleCostiBudgetDEFINITIVO ')
     risultat1 = cur.fetchall()
     risultati1 = list(map(float, [x[0] for x in risultat1]))
         # Query 2
-    cur.execute('SELECT ROUND(TOTALE_COSTI_A_CONSUNTIVO,2) FROM totalecostiConsuntivo')
+    cur.execute('SELECT ROUND( sum(TotaleCostiConsuntivo),2) FROM TotaleCostiConsuntivoDEFINITIVO')
     risultat2 = cur.fetchall()
     risultati2 = list(map(float, [x[0] for x in risultat2]))
     #RICAVI
@@ -32,7 +35,7 @@ def table():
     risultat5 = cur.fetchall()
     risultati5 = list(map(float, [x[0] for x in risultat5]))
     # Query 6
-    cur.execute('SELECT ROUND(sum(costitotalimixstandard),2) from  costitotalimixstandard')
+    cur.execute('SELECT ROUND(sum(TotaleCostiMixStandard),2) from  TotaleCostiMixStandard')
     risultat6 = cur.fetchall()
     risultati6 = list(map(float, [x[0] for x in risultat6]))
     # Query 7
@@ -45,7 +48,7 @@ def table():
     risultat8 = cur.fetchall()
     risultati8 = list(map(float, [x[0] for x in risultat8]))
     # Query 9
-    cur.execute('SELECT ROUND(sum(costitotalimixeffettivo),2) from  costitotalimixeffettivo')
+    cur.execute('SELECT ROUND(sum(TotaleCostiMixEffettivo),2) from  TotaleCostiMixEffettivo')
     risultat9 = cur.fetchall()
     risultati9 = list(map(float, [x[0] for x in risultat9]))
     # Query 10
@@ -132,11 +135,11 @@ def table():
 
     return render_template('home.html', risultati1=risultati1, risultati2=risultati2 ,risultati3=risultati3, risultati4=risultati4, risultati5=risultati5, risultati6=risultati6 , risultati7=risultati7 , risultati8=risultati8 , risultati9=risultati9, risultati10=risultati10 , risultati11=risultati11 , risultati12=risultati12 , risultati13=risultati13 , risultati14=risultati14 , risultati15=risultati15 , risultati16=risultati16 , Delta1=Delta1, Delta2=Delta2, Delta3=Delta3 , Delta4=Delta4, Delta5=Delta5 , Delta6=Delta6 , Delta7=Delta7 , Delta8=Delta8 , Delta9=Delta9, Delta10=Delta10, Delta11=Delta11 , Delta12=Delta12)
 
-@app.route('/TotaleVenditeBudget')
+@app.route('/TotaleVenditeBudget')  # valore unico 351708.8378556848
 def VALUTACONSUNTIVO():
     conn = sqlite3.connect("Database.db")
     cur = conn.cursor()
-    cur.execute('SELECT * FROM TotaleVenditeBudgetVALUTACONSUNTIVO ')
+    cur.execute('SELECT * FROM TotaleVenditeBudgetVALUTACONSUNTIVO ') # valore unico 351708.8378556848
     rs = cur.fetchall()
     return render_template('TotaleVenditeBudget.html', rs=rs)
 
@@ -156,6 +159,17 @@ def ScostamentoCostoOrarioAreaProduzione():
     rs2 = cur.fetchall()
     return render_template('ScostamentoCostoOrarioAreaProduzione.html', rs2=rs2)
 
+@app.route('/ScostamentoMateriePrime')
+def ScostamentoMateriePrime():
+    conn = sqlite3.connect("Database.db")
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM ScostamentoMateriePrime   ')
+    rs3 = cur.fetchall()
+    return render_template('ScostamentoMateriePrime.html', rs3=rs3)
+
+@app.route('/ChiSiamo')
+def ChiSiamo():
+    return render_template('ChiSiamo.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

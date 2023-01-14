@@ -3,7 +3,7 @@ import sqlite3
 def CreazioneDB():
     # connessione al database
     conn = sqlite3.connect('Database.db')
-     # lettura del file CSV
+    # lettura del file CSV
     TabellaClienti=pd.read_csv('Clienti.csv',index_col=False, delimiter = ',')
     Cli=TabellaClienti[["Nr.","Fatt. cumulative","Valuta"]]
     Cli=Cli.rename(columns={'Nr.': 'CodCli','Fatt. cumulative':'FattureCum'})
@@ -12,18 +12,14 @@ def CreazioneDB():
     TabellaVendite=pd.read_csv('Vendite1.csv',index_col=False, delimiter = ';')
     Ven=TabellaVendite[["Nr. movimento","budget/cons","Nr articolo","Nr. origine","Quantità","Importo vendita in valuta locale (TOTALE VENDITA)"]]
     Ven=Ven.rename(columns={'Nr. movimento': 'NrMov','budget/cons':'Tipologia','Nr articolo':'NrArtV','Nr. origine': 'NrOrig','Quantità':'Qta','Importo vendita in valuta locale (TOTALE VENDITA)':'ImportV'})
-
     TabellaConsumi=pd.read_csv('Consumi.csv',index_col=False, delimiter = ';')
     Cons=TabellaConsumi[["Nr. movimento","Budget/cons","Codice MP","Nr articolo","Nr. documento","Quantità MP impiegata","Importo costo (TOTALE)"]]
     Cons=Cons.rename(columns={'Nr. movimento': 'NrMovim','Budget/cons':'Tipol','Codice MP':'CodiceMP','Nr articolo': 'NrArtC','Nr. documento':'NrDoc','Quantità MP impiegata':'QuantitàMP','Importo costo (TOTALE)':'ImportoTot'})
-
     TabellaCostRis=pd.read_csv('CostoRisorse.csv',index_col=False, delimiter = ';')
     TabellaCostRis=TabellaCostRis.rename(columns={'IDRis': 'IDRis','Risorsa':'RisorsaR','Area di produzione': 'AreaProdR','Costo orario Budget(€/h)':'CostoBudgetR','Costo orario Cons (€/h)':'CostoConsR'})
-
     Imp=pd.read_csv('Impiego.csv',index_col=False, delimiter = ';')
     Imp=Imp.rename(columns={'IDImp': 'IDImp','nr articolo':'NrArt','budget/consuntivo':'Tipologia','Nr. Ordine di produzione': 'NrOrdine','Descrizione':'Descrizione','Nr. Area di produzione':'NrArea','Risorsa':'RisorsaC','Tempo risorsa':'Tempo','Quantità di output':'Quantitá'})
-
-    # scrittura dei dati del DataFrame in una tabella SQLite
+    # scrittura dei dati del DataFrame in una tabella SQLite facendo cosi tolgo il ciclo for ed ottimizzo il caricamento e la creazione del database ad un tempo quasi istante
     Cli.to_sql('Cliente', conn, if_exists='replace')
     TabellaTdC.to_sql('Valuta', conn, if_exists='replace')
     Ven.to_sql('Vendita', conn, if_exists='replace')
@@ -94,6 +90,25 @@ def CreaViste():
     cursor.execute('DROP VIEW IF EXISTS molconsuntivo;')
     cursor.execute('DROP VIEW IF EXISTS molmixstandard;')
     cursor.execute('DROP VIEW IF EXISTS molmixeffettivo;')
+    #PARTE NUOVA/QUERY NUOVE PER MODIFICA
+    cursor.execute('DROP VIEW IF EXISTS CostoImpiegoRisorseBUDGET;')
+    cursor.execute('DROP VIEW IF EXISTS CostiConsumiBudget;')
+    cursor.execute('DROP VIEW IF EXISTS CostiProdBudget;')
+    cursor.execute('DROP VIEW IF EXISTS CostiTotaliBudget;')
+    cursor.execute('DROP VIEW IF EXISTS CostiTotaliperArticoloBudget;')
+    cursor.execute('DROP VIEW IF EXISTS TotaleCostiBudgetDEFINITIVO')
+    cursor.execute('DROP VIEW IF EXISTS TotaleCostiConsuntivoDEFINITIVO;')
+    
+    cursor.execute('DROP VIEW IF EXISTS CostoImpiegoRisorseCONSUNTIVO;')
+    cursor.execute('DROP VIEW IF EXISTS CostiConsumiConsuntivo;')
+    cursor.execute('DROP VIEW IF EXISTS CostiProdConsuntivo;')
+    cursor.execute('DROP VIEW IF EXISTS CostiTotaliConsuntivo;')
+    cursor.execute('DROP VIEW IF EXISTS CostiTotaliperArticoloConsuntivo;')
+
+    cursor.execute('DROP VIEW IF EXISTS costimixstandardQueryBudget;')
+    cursor.execute('DROP VIEW IF EXISTS TotaleCostiMixStandard;')
+    cursor.execute('DROP VIEW IF EXISTS costimixeffettivoQueryBudget;')
+    cursor.execute('DROP VIEW IF EXISTS TotaleCostiMixEffettivo;')
 
     cursor.execute('DROP VIEW IF EXISTS venditeBudgetinVALUTALOCALECONSUNTIVO;')
     cursor.execute('DROP VIEW IF EXISTS ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO;')
@@ -106,6 +121,10 @@ def CreaViste():
     cursor.execute('DROP VIEW IF EXISTS ScostamentoTassiDiCambio ;')
 
     cursor.execute('DROP VIEW IF EXISTS ScostamentoCostoOrarioAreaProd ;')
+
+    cursor.execute('DROP VIEW IF EXISTS costomedioMPperCodiceMPBudget ;')
+    cursor.execute('DROP VIEW IF EXISTS costomedioMPperCodiceMPConsuntivo ;')
+    cursor.execute('DROP VIEW IF EXISTS ScostamentoMateriePrime ;')
 
     cursor.execute("CREATE VIEW venditeBudget as select * from vendita where Tipologia='BUDGET' or Tipologia='Budget' and ImportV>0;")
     cursor.execute("CREATE VIEW venditeBudgetinVALUTALOCALE as select vb.NrMov,vb.Tipologia,vb.NrArtV,vb.NrOrig,vb.Qta,vb.ImportV/v.Tasso as RealImportV,v.CodVal from venditebudget vb join cliente c on vb.NrOrig=c.CodCLi join valuta v on c.Valuta=v.CodVal where v.Tipo='Budget' or v.Tipo='BUDGET';" )
@@ -159,6 +178,25 @@ def CreaViste():
     cursor.execute("create view molconsuntivo AS SELECT (v.TotaleVenditeConsuntivo - c.`TOTALE_COSTI_A_CONSUNTIVO`) AS `MOL_CONSUNTIVO` FROM (totalecosticonsuntivo c JOIN totalevenditeconsuntivo v)    ; ")
     cursor.execute("create view molmixstandard as select Ricavo-costitotalimixstandard as `MOL_mix_standard` from ricavimixstandard,costitotalimixstandard;")
     cursor.execute("create view molmixeffettivo as select Ricavo-costitotalimixeffettivo as `MOL_mix_effettivo` from ricavimixeffettivo,costitotalimixeffettivo;")
+    #PARTE NUOVA/QUERY NUOVE PER MODIFICA
+    #NUOVI COSTI
+    #--BUDGET--
+    cursor.execute("Create view CostoImpiegoRisorseBUDGET as select i.NrArt,sum(i.Tempo*r.CostoBudgetR)as CostiImpiego from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR ) where i.Tipologia like 'budget' group by i.NrArt;")
+    cursor.execute("create view CostiConsumiBudget as select NrArtC,sum(ImportoTot) as CostoConsumo from consumo where Tipol='Budget' or Tipol='BUDGET' group by NrArtC;")
+    cursor.execute("create view CostiProdBudget as select c.NrArtC,CostoConsumo+i.CostiImpiego as CostoTotaleProduzione from CostiConsumiBudget c join CostoImpiegoRisorseBUDGET i  on(c.NrArtC=i.NrArt) group by c.NrArtC;")
+    cursor.execute("create view CostiTotaliBudget as select cp.NrArtC,CostoTotaleProduzione/vb.Qta as CostoTotaleUnitario from CostiProdBudget cp join volumiarticolibudget vb on (cp.NrArtC=vb.NrArtV);")
+    cursor.execute("create view CostiTotaliperArticoloBudget as select cp.NrArtC,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta from CostiTotaliBudget cp join volumiarticolibudget vb on (cp.NrArtC=vb.NrArtV);")
+    #--CONSUNTIVO--
+    cursor.execute("Create view CostoImpiegoRisorseConsuntivo as select i.NrArt,sum(i.Tempo*r.CostoBudgetR)as CostiImpiego from impiegoris i join risorsa r on (i.RisorsaC=r.RisorsaR and i.NrArea=r.AreaProdR ) where i.Tipologia like 'Consuntivo' group by i.NrArt;")
+    cursor.execute("create view CostiConsumiConsuntivo as select NrArtC,sum(ImportoTot) as CostoConsumo from consumo where Tipol='Consuntivo' or Tipol='CONSUNTIVO' group by NrArtC;")
+    cursor.execute("create view CostiProdConsuntivo as select c.NrArtC,CostoConsumo+i.CostiImpiego as CostoTotaleProduzione from CostiConsumiConsuntivo c join CostoImpiegoRisorseConsuntivo i  on(c.NrArtC=i.NrArt) group by c.NrArtC;")
+    cursor.execute("create view CostiTotaliConsuntivo as select cp.NrArtC,CostoTotaleProduzione/vb.Qta as CostoTotaleUnitario from CostiProdConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.NrArtV);")
+    cursor.execute("create view CostiTotaliperArticoloConsuntivo as select cp.NrArtC,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta from CostiTotaliConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.NrArtV);")
+    #--CALCOLO COSTI MIX--
+    cursor.execute("create view costimixstandardQueryBudget as select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixstandard from CostiTotaliBudget c join mixstandard m on c.NrArtC=m.NrArtV group by c.NrArtC;")
+    cursor.execute("create view TotaleCostiMixStandard as select sum(c.costimixstandard) as TotaleCostiMixStandard from costimixstandardQueryBudget c;")
+    cursor.execute("create view costimixeffettivoQueryBudget as select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixeffettivo from CostiTotaliBudget c join mixeffettivo m on c.NrArtC=m.NrArtV group by c.NrArtC;")
+    cursor.execute("create view TotaleCostiMixEffettivo as select sum(c.costimixeffettivo) as TotaleCostiMixEffettivo from costimixeffettivoQueryBudget c;")
 
     cursor.execute("CREATE VIEW venditeBudgetinVALUTALOCALECONSUNTIVO as select vb.NrMov,vb.Tipologia,vb.NrArtV,vb.NrOrig,vb.Qta,vb.ImportV/v.Tasso as RealImportV,v.CodVal from venditebudget vb join cliente c on vb.NrOrig=c.CodCLi join valuta v on c.Valuta=v.CodVal where v.Tipo = 'consuntivo' OR v.Tipo = 'CONSUNTIVO';")
     cursor.execute("Create view ImportiVenditePerArticoloBudgetVALUTACONSUNTIVO AS select vbvl.NrArtV,sum(RealImportV) as ImportoTotArticolo,sum(vbvl.Qta) as Qta from venditeBudgetinVALUTALOCALECONSUNTIVO vbvl group by vbvl.NrArtV;")
@@ -170,8 +208,15 @@ def CreaViste():
 
     cursor.execute('create view ScostamentoTassiDiCambio as select b.Tasso as "TassoBudget", c.Tasso-b.Tasso as "Scostamento",c.Tasso as "TassoConsuntivo" from TassiBudget b,TassiConsuntivo c where b.CodVal=c.CodVal;')
 
-    cursor.execute('create view ScostamentoCostoOrarioAreaProd as select AreaProdR,RisorsaR,CostoBudgetR,(CostoConsR-CostoBudgetR) as Scostamento,CostoConsR from risorsa')
+    cursor.execute('create view ScostamentoCostoOrarioAreaProd as select AreaProdR,RisorsaR,CostoBudgetR,(CostoConsR-CostoBudgetR) as Scostamento,CostoConsR from risorsa;')
+
+    cursor.execute('create view costomedioMPperCodiceMPBudget as select CodiceMP as CodiceMP, avg(ImportoTot/QuantitàMP) as costomedioMP from consumo where Tipol="Budget" or Tipol="BUDGET" group by CodiceMP;')
+    cursor.execute('create view costomedioMPperCodiceMPConsuntivo as select CodiceMP as CodiceMP, avg(ImportoTot/QuantitàMP) as costomedioMP from consumo where Tipol="Consuntivo" or Tipol="CONSUNTIVO" group by CodiceMP;')
+    cursor.execute('create view ScostamentoMateriePrime as select b.CodiceMP,b.costomedioMP as costomedioMPbudget,c.costomedioMP-b.costomedioMP as scostamento,c.costomedioMP as costomedioMPconsuntivo from costomedioMPperCodiceMPBudget b join costomedioMPperCodiceMPConsuntivo c on(b.CodiceMP=c.CodiceMP) group by b.CodiceMP')
    
+    cursor.execute('create view TotaleCostiBudgetDEFINITIVO as select sum(CostoTotalePerArticolo) as TotaleCostiBudget from CostiTotaliperArticoloBudget;')
+    cursor.execute('create view TotaleCostiConsuntivoDEFINITIVO as select sum(CostoTotalePerArticolo) as TotaleCostiConsuntivo from CostiTotaliperArticoloConsuntivo;')
+
     print("View created!")
     conn.close()
     
