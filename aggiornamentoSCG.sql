@@ -82,5 +82,11 @@ select b.CodiceMP,b.costomedioMP as costomedioMPbudget,c.costomedioMP-b.costomed
 from costomedioMPperCodiceMPBudget b join costomedioMPperCodiceMPConsuntivo c on(b.CodiceMP=c.CodiceMP)
 group by b.CodiceMP
 
+--------------------------------------------------
 
+create view ScostamentiPerArticolo as
+select vb.NrArtV as NrArticolo,vc.Qta-vb.Qta as ScostamentoQuantità ,vc.ImportoTotArticolo-vb.ImportoTotArticolo as ScostamentoRicavo,cc.CostoTotalePerArticolo-cb.CostoTotalePerArticolo as  ScostamentoCosti, (vc.ImportoTotArticolo-vb.ImportoTotArticolo) - (cc.CostoTotalePerArticolo-cb.CostoTotalePerArticolo)  as ScostamentoMol
+from (importivenditeperarticolobudget vb join importivenditeperarticoloconsuntivo vc on(vb.NrArtV=vc.NrArtV) 
+		join CostiTotaliperArticoloBudget cb on (cb.NrArtC=vb.NrArtV) join CostiTotaliperArticoloConsuntivo cc on (cc.NrArtC=vb.NrArtV))
+        
 
