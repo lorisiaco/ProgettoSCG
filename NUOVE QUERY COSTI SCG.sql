@@ -58,6 +58,7 @@ select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixstandard
 from CostiTotaliBudget c join mixstandard m on c.NrArtC=m.NrArtV
 group by c.NrArtC;
 
++
 create view TotaleCostiMixStandard as
 select sum(c.costimixstandard) as TotaleCostiMixStandard
 from costimixstandardQueryBudget c;
@@ -67,9 +68,21 @@ select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixeffettivo
 from CostiTotaliBudget c join mixeffettivo m on c.NrArtC=m.NrArtV
 group by c.NrArtC;
 
++
 create view TotaleCostiMixEffettivo as
 select sum(c.costimixeffettivo) as TotaleCostiMixEffettivo
 from costimixeffettivoQueryBudget c;
+
+--Somma costi budget e consuntivo da aggiungere--
++
+create view TotaleCostiBudgetDEFINITIVO as
+select sum(CostoTotalePerArticolo) as TotaleCostiBudget
+from CostiTotaliperArticoloBudget;
+
++
+create view TotaleCostiConsuntivoDEFINITIVO as
+select sum(CostoTotalePerArticolo) as TotaleCostiConsuntivo
+from CostiTotaliperArticoloConsuntivo;
 
 
 
