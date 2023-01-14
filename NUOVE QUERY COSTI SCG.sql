@@ -54,22 +54,22 @@ from CostiTotaliConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.
 --CALCOLO COSTI MIX--
 
 create view costimixstandardQueryBudget as
-select c.NrArtC,sum(c.CostoTotalePerArticolo*m.mix) as costimixstandard
-from CostiTotaliperArticoloBudget c join mixvolumibudget m on c.NrArtC=m.NrArtV
+select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixstandard
+from CostiTotaliBudget c join mixstandard m on c.NrArtC=m.NrArtV
 group by c.NrArtC;
 
 create view TotaleCostiMixStandard as
-select (sum(c.costimixstandard)/vb.VolumeTotaleVenditeBudget)*vc.VolumeTotaleVenditeConsuntivo
-from costimixstandardQueryBudget c,voltotalevenditebudget vb,voltotalevenditeconsuntivo vc;
+select sum(c.costimixstandard) as TotaleCostiMixStandard
+from costimixstandardQueryBudget c;
 
 create view costimixeffettivoQueryBudget as
-select c.NrArtC,sum(c.CostoTotalePerArticolo*m.mix) as costimixstandard
-from CostiTotaliperArticoloBudget c join mixvolumiconsuntivo m on c.NrArtC=m.NrArtV
+select c.NrArtC,sum(c.CostoTotaleUnitario*m.qta)as costimixeffettivo
+from CostiTotaliBudget c join mixeffettivo m on c.NrArtC=m.NrArtV
 group by c.NrArtC;
 
-create view TotaleCostiMixeffettivo as
-select (sum(c.costimixstandard)/vb.VolumeTotaleVenditeBudget)*vc.VolumeTotaleVenditeConsuntivo
-from costimixstandardQueryBudget c,voltotalevenditebudget vb,voltotalevenditeconsuntivo vc
+create view TotaleCostiMixEffettivo as
+select sum(c.costimixeffettivo) as TotaleCostiMixEffettivo
+from costimixeffettivoQueryBudget c;
 
 
 
