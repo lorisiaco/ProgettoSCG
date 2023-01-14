@@ -84,7 +84,61 @@ create view TotaleCostiConsuntivoDEFINITIVO as
 select sum(CostoTotalePerArticolo) as TotaleCostiConsuntivo
 from CostiTotaliperArticoloConsuntivo;
 
+--------------------------------------------------------------------------------------------------
+NUOVE:
 
+create view CostiConsumiTotaliConsuntivo as
+select cp.NrArtC,CostoConsumo/vb.Qta as CostoTotaleUnitario
+from CostiConsumiConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.NrArtV);
+
+create view ConsumiTotaliPerArticoloConsuntivo as
+select cp.NrArtC,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta
+from CostiConsumiTotaliConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArtC=vb.NrArtV);
+
+create view CostiImpiegoTotaliConsuntivo as
+select cp.NrArt,CostiImpiego/vb.Qta as CostoTotaleUnitario
+from CostoImpiegoRisorseConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArt=vb.NrArtV);
+
+create view ImpiegoTotaliPerArticoloConsuntivo as
+select cp.NrArt,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta
+from CostiImpiegoTotaliConsuntivo cp join volumiarticoliConsuntivo vb on (cp.NrArt=vb.NrArtV);
+
+create view TotaleImpiegoConsuntivoDEFINITIVO as
+select sum(CostoTotalePerArticolo)
+from ImpiegoTotaliPerArticoloConsuntivo;
+
+create view CostiConsumiTotaliBudget as
+select cp.NrArtC,CostoConsumo/vb.Qta as CostoTotaleUnitario
+from CostiConsumiBudget cp join volumiarticoliBudget vb on (cp.NrArtC=vb.NrArtV);
+
+create view ConsumiTotaliPerArticoloBudget as
+select cp.NrArtC,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta
+from CostiConsumiTotaliBudget cp join volumiarticoliBudget vb on (cp.NrArtC=vb.NrArtV);
+
+create view TotaleConsumiBudgetDEFINITIVO as
+select sum(CostoTotalePerArticolo)
+from ConsumiTotaliPerArticoloBudget;
+
+create view CostiImpiegoTotaliBudget as
+select cp.NrArt,CostiImpiego/vb.Qta as CostoTotaleUnitario
+from CostoImpiegoRisorseBudget cp join volumiarticoliBudget vb on (cp.NrArt=vb.NrArtV);
+
+create view ImpiegoTotaliPerArticoloBudget as
+select cp.NrArt,cp.CostoTotaleUnitario*vb.Qta as CostoTotalePerArticolo,vb.qta
+from CostiImpiegoTotaliBudget cp join volumiarticoliBudget vb on (cp.NrArt=vb.NrArtV);
+
+create view TotaleImpiegoBudgetDEFINITIVO as
+select sum(CostoTotalePerArticolo)
+from ImpiegoTotaliPerArticoloBudget;
+
+
+create view ctbudget as
+select c.`sum(CostoTotalePerArticolo)`+i.`sum(CostoTotalePerArticolo)` as costototalebudget
+from TotaleImpiegoBudgetDEFINITIVO i,TotaleConsumiBudgetDEFINITIVO c,TotaleCostiBudgetDEFINITIVO d;
+
+create view ctconsuntivo as
+select c.`sum(CostoTotalePerArticolo)`+i.`sum(CostoTotalePerArticolo)` as costototaleconsuntivo
+from TotaleImpiegoConsuntivoDEFINITIVO i,TotaleConsumiConsuntivoDEFINITIVO c,TotaleCostiConsuntivoDEFINITIVO d;
 
 
 --DA CANCELLARE--
