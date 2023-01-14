@@ -60,3 +60,27 @@ where (i.Tipologia = 'consuntivo' or i.Tipologia='CONSUNTIVO') and i.Quantitá>=
 group by i.NrArea,i.RisorsaC
 ORDER BY sum(i.Tempo) DESC
 
+--------------------------------------------------------------------------------------------------
+
+--aggiungi queste query--
+
+create view costomedioMPperCodiceMPBudget as
+select CodiceMP as CodiceMP, avg(ImportoTot/QuantitàMP) as costomedioMP
+from consumo
+where Tipol='Budget' or Tipol='BUDGET'
+group by CodiceMP;
+
+create view costomedioMPperCodiceMPConsuntivo as
+select CodiceMP as CodiceMP, avg(ImportoTot/QuantitàMP) as costomedioMP
+from consumo
+where Tipol='Consuntivo' or Tipol='CONSUNTIVO'
+group by CodiceMP;
+
+--e stampa questa --
+create view ScostamentoMateriePrime as
+select b.CodiceMP,b.costomedioMP as costomedioMPbudget,c.costomedioMP-b.costomedioMP as scostamento,c.costomedioMP as costomedioMPconsuntivo
+from costomedioMPperCodiceMPBudget b join costomedioMPperCodiceMPConsuntivo c on(b.CodiceMP=c.CodiceMP)
+group by b.CodiceMP
+
+
+
