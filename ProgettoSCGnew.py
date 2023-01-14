@@ -149,7 +149,13 @@ def ScostamentoTassiDiCambio():
     cur = conn.cursor()
     cur.execute('SELECT * FROM ScostamentoTassiDiCambio ')
     rs1 = cur.fetchall()
-    return render_template('ScostamentoTassiDiCambio.html', rs1=rs1)
+    cur.execute('SELECT ROUND(TotaleVenditeBudgetVALUTACONSUNTIVO,2) FROM TotaleVenditeBudgetVALUTACONSUNTIVO   ')
+    rs4 = cur.fetchall()
+    rss4 = [float(x[0]) for x in rs4]
+    cur.execute('SELECT ROUND(TotaleVenditeConsuntivo,2) FROM totalevenditeconsuntivo')
+    r = cur.fetchall()
+    rr= list(map(float, [x[0] for x in r]))
+    return render_template('ScostamentoTassiDiCambio.html', rs1=rs1, rss4=rss4, rr=rr)
 
 @app.route('/ScostamentoCostoOrarioAreaProduzione')
 def ScostamentoCostoOrarioAreaProduzione():

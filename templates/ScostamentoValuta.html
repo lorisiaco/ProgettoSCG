@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <table id="tabella" class="display">
+        <thead>
+            <tr>
+                <th> /  </th>
+                <th> Budget  </th>
+                <th> Scostamento </th>
+                <th> Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ricavi</td>
+                <td>{% for valore in rss4 %} {{ valore }} {% endfor %}</td>
+                <td>v</td>
+                <td>v</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+{% endblock %}
