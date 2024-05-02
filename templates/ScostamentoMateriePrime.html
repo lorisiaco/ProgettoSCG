@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#myTable').DataTable( {
+          "scrollY": "200px",
+          "paging": true,
+          "pageLength": 10
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <table id="myTable" class="display" style="width:20%;">
+        <thead>
+            <tr>
+                <th>Codice Materia Prima </th>
+                <th>Costo Medio Budget</th>
+                <th>Scostamento  </th>
+                <th>Costo Medio Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valore in rs3 %}
+            <tr>
+                <td>{{ valore[0] }}</td>
+                <td>{{ valore[1]|round(3) }}</td>
+                <td>{{ valore[2]|round(3) }}</td>
+                <td>{{ valore[3]|round(3) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </body>
+</html>

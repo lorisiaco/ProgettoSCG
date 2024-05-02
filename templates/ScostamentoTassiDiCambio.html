@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div>
+    <table >
+        <thead>
+            <tr>
+                <th> /  </th>
+                <th> Budget  </th>
+                <th> Scostamento </th>
+                <th> Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ricavi</td>
+                <td>{% for valore in rss4 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in xx %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in rr %} {{ valore }} {% endfor %}</td>
+            </tr>
+        </tbody>
+    </table>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+    <table >
+        <thead>
+            <tr>
+                <th>Tasso Budget  </th>
+                <th> Scostamento </th>
+                <th> Tasso Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valore in rs1 %}
+            <tr>
+                <td>{{ valore[0]|round(3) }}</td>
+                <td>{{ valore[1]|round(3) }}</td>
+                <td>{{ valore[2]|round(3) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

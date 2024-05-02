@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ title }}</h2>
+<h3>{{ message }}</h3>
+<style>
+    .bottom-left2 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width:50%;
+    }
+</style>
+<body>
+<address class="bottom-left2">
+
+    <strong>Loris Iacoban 1074130:</strong>   <a href="mailto:l.iacoban@studenti.unibg.it">l.iacoban@studenti.unibg.it</a><br />
+    <strong>Amin Borqal 1073928:</strong>   <a href="mailto:m.borqal@studenti.unibg.it">a.borqal@studenti.unibg.it</a><br />
+    <strong>Andrea Moressa  1074124:</strong>   <a href="mailto:a.moressa@studenti.unibg.it">a.moressa@studenti.unibg.it</a><br />
+</address>
+</body>
+{% endblock %}

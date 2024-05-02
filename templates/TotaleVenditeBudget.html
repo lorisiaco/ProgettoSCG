@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+    <table id="tabella" class="display">
+        <thead>
+            <tr>
+                <th> / </th>
+                <th>Budget</th>
+                <th>Delta1</th>
+                <th>MixStandard</th>
+                <th>Delta2</th>
+                <th>MixEffettivo</th>
+                <th>Delta3</th>
+                <th>Consuntivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>RICAVI</td>
+                <td>{% for valore in risultati3 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta1 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati5 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta2 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati8 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta3 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati4 %} {{ valore }} {% endfor %}</td>
+            </tr>
+            <tr>
+                <td>COSTI</td>
+                <td>{% for valore in risultati1 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta4 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati6 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta5 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati9 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta6 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati2 %} {{ valore }} {% endfor %}</td>
+            </tr>
+            <tr>
+                <td>MOL</td>
+                <td>{% for valore in risultati11 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta7 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati7 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta8 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati10 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta9 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati12 %} {{ valore }} {% endfor %}</td>
+            </tr>
+            <tr>
+                <td>QUANTITA'</td>
+                <td>{% for valore in risultati13 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta10 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati15 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta11 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati16 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in Delta12 %} {{ valore }} {% endfor %}</td>
+                <td>{% for valore in risultati14 %} {{ valore }} {% endfor %}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+{% endblock %}
